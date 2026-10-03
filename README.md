@@ -2,7 +2,7 @@
 
 A calm, clean memory (pairs) game that runs in the browser – a single HTML file, no dependencies, works offline.
 
-**Play it live: <https://fodorlas.github.io/memoria/>**
+**Play it live: <https://fodorlas.github.io/memory/>**
 
 ![Start screen of the memory game](docs/screenshot.png)
 
