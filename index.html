@@ -1,0 +1,1462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Memory</title>
+<meta name="description" content="A calm, accessible memory game with four difficulty levels, optional time pressure and a personal best.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='5' y='8' width='18' height='25' rx='4' transform='rotate(-10 14 20)' fill='%2325565C'/%3E%3Crect x='17' y='6' width='18' height='25' rx='4' transform='rotate(8 26 18)' fill='%23fff' stroke='%23C79A3E' stroke-width='2.5'/%3E%3C/svg%3E">
+<style>
+  /* ---------- Colors (light) ---------- */
+  :root {
+    color-scheme: light;
+    --bg: #F5F2EC;
+    --surface: #FFFFFF;
+    --surface-2: #FAF8F4;
+    --text: #1F2A30;
+    --muted: #56646A;
+    --border: #E2DCD1;
+    --border-strong: #BDB5A6;
+    --card-edge: #DAD3C6;
+    --accent: #25565C;
+    --accent-hover: #1C464B;
+    --on-accent: #FFFFFF;
+    --accent-tint: #E4EEEE;
+    --card-back: #25565C;
+    --card-back-line: rgba(255, 255, 255, .07);
+    --card-back-frame: rgba(255, 255, 255, .24);
+    --ok: #2A7152;
+    --ok-tint: #EAF3EE;
+    --on-ok: #FFFFFF;
+    --bad: #A84B35;
+    --bad-tint: #FBEDE8;
+    --on-bad: #FFFFFF;
+    --gold: #C79A3E;
+    --gold-icon: #A67C28;
+    --gold-text: #6E5010;
+    --gold-tint: #F6ECD6;
+    --focus: #25565C;
+    --chart-line: #25565C;
+    --chart-record: #A67C28;
+    --grid: #E8E3DA;
+    --backdrop: rgba(245, 242, 236, .97);
+    --shadow-sm: 0 1px 2px rgba(31, 42, 48, .07);
+    --shadow: 0 1px 2px rgba(31, 42, 48, .06), 0 6px 16px rgba(31, 42, 48, .08);
+    --radius: 14px;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-emoji: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
+  }
+
+  /* ---------- Colors (dark) – follows the system setting ---------- */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #13191C;
+      --surface: #1D2528;
+      --surface-2: #192124;
+      --text: #E9E4DA;
+      --muted: #A9B3B5;
+      --border: #2E393D;
+      --border-strong: #4B585D;
+      --card-edge: #3E4A4F;
+      --accent: #7DB9BF;
+      --accent-hover: #93C7CC;
+      --on-accent: #10181B;
+      --accent-tint: #1F3538;
+      --card-back: #3C7C83;
+      --card-back-line: rgba(255, 255, 255, .06);
+      --card-back-frame: rgba(255, 255, 255, .2);
+      --ok: #6DBF95;
+      --ok-tint: #1E3029;
+      --on-ok: #10181B;
+      --bad: #E08A72;
+      --bad-tint: #35241F;
+      --on-bad: #10181B;
+      --gold: #D9B25F;
+      --gold-icon: #D9B25F;
+      --gold-text: #E2C27A;
+      --gold-tint: #332A17;
+      --focus: #9FD3D8;
+      --chart-line: #7DB9BF;
+      --chart-record: #D9B25F;
+      --grid: #2A3539;
+      --backdrop: rgba(19, 25, 28, .97);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+      --shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 20px rgba(0, 0, 0, .28);
+    }
+  }
+  /* ---------- Colors (dark) – manual choice ---------- */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #13191C;
+    --surface: #1D2528;
+    --surface-2: #192124;
+    --text: #E9E4DA;
+    --muted: #A9B3B5;
+    --border: #2E393D;
+    --border-strong: #4B585D;
+    --card-edge: #3E4A4F;
+    --accent: #7DB9BF;
+    --accent-hover: #93C7CC;
+    --on-accent: #10181B;
+    --accent-tint: #1F3538;
+    --card-back: #3C7C83;
+    --card-back-line: rgba(255, 255, 255, .06);
+    --card-back-frame: rgba(255, 255, 255, .2);
+    --ok: #6DBF95;
+    --ok-tint: #1E3029;
+    --on-ok: #10181B;
+    --bad: #E08A72;
+    --bad-tint: #35241F;
+    --on-bad: #10181B;
+    --gold: #D9B25F;
+    --gold-icon: #D9B25F;
+    --gold-text: #E2C27A;
+    --gold-tint: #332A17;
+    --focus: #9FD3D8;
+    --chart-line: #7DB9BF;
+    --chart-record: #D9B25F;
+    --grid: #2A3539;
+    --backdrop: rgba(19, 25, 28, .97);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .3);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .25), 0 8px 20px rgba(0, 0, 0, .28);
+  }
+
+  /* ---------- Basics ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  @media (min-width: 768px) { body { font-size: 1.125rem; } }
+  h1, h2, h3 { margin: 0; line-height: 1.2; font-weight: 650; letter-spacing: -0.01em; }
+  p { margin: 0; }
+  button { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+  [tabindex="-1"]:focus { outline: none; }
+  .sr-only {
+    position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  .icon {
+    width: 1.25em; height: 1.25em; flex: none;
+    fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .emoji-font { font-family: var(--font-emoji); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 12px 28px;
+    border: 1px solid transparent; border-radius: 14px;
+    font-weight: 650; font-size: 1.0625rem; cursor: pointer;
+    transition: background-color .15s, border-color .15s;
+  }
+  .btn-primary { background: var(--accent); color: var(--on-accent); box-shadow: var(--shadow-sm); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
+  .btn-secondary:hover { border-color: var(--text); }
+  .pill-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 44px; padding: 8px 14px;
+    border: 1px solid var(--border); border-radius: 999px;
+    background: var(--surface); color: var(--text);
+    font-size: .9375rem; cursor: pointer;
+  }
+  .pill-btn:hover { border-color: var(--border-strong); }
+
+  /* ---------- Start screen ---------- */
+  .start {
+    max-width: 780px; margin: 0 auto;
+    padding: max(24px, env(safe-area-inset-top)) 16px 0;
+  }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand h1 { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.5rem); }
+  .logo { width: 46px; height: 46px; flex: none; }
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; }
+  .intro { color: var(--muted); margin-top: 14px; max-width: 48ch; }
+
+  fieldset { border: 0; margin: 28px 0 0; padding: 0; min-width: 0; }
+  legend {
+    padding: 0; margin-bottom: 10px;
+    font-size: .8125rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .tiles { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .tiles.modes { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+  .tile { position: relative; display: block; cursor: pointer; }
+  .tile input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .tile-body {
+    display: flex; flex-direction: column; gap: 2px; height: 100%;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    transition: border-color .15s, background-color .15s;
+  }
+  .tile:hover .tile-body { border-color: var(--border-strong); }
+  .tile input:checked + .tile-body {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
+  }
+  .tile input:focus-visible + .tile-body { outline: 3px solid var(--focus); outline-offset: 3px; }
+  .check {
+    position: absolute; top: 12px; right: 12px;
+    width: 22px; height: 22px; border-radius: 50%;
+    display: grid; place-items: center;
+    border: 1.5px solid var(--border-strong); background: var(--surface);
+  }
+  .check .icon { width: 14px; height: 14px; stroke-width: 3; opacity: 0; }
+  .tile input:checked + .tile-body .check { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .tile input:checked + .tile-body .check .icon { opacity: 1; }
+  .tile-body > .check + * { padding-right: 30px; }
+  .tile-sample { font-family: var(--font-emoji); font-size: 1.4rem; line-height: 1.3; letter-spacing: .2em; white-space: nowrap; margin-bottom: 4px; }
+  .tile-title { font-weight: 650; }
+  .tile-meta { color: var(--muted); font-size: .9375rem; line-height: 1.4; }
+  .tile-record {
+    display: flex; align-items: center; gap: 6px; margin-top: 6px;
+    font-size: .875rem; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .tile-record .icon { width: 16px; height: 16px; }
+  .tile-record.has { color: var(--gold-text); font-weight: 600; }
+  .tile-record.has .icon { color: var(--gold-icon); }
+
+  .start-actions {
+    position: sticky; bottom: 0; z-index: 1;
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: 28px;
+    padding: 20px 0 max(16px, env(safe-area-inset-bottom));
+    background: linear-gradient(to bottom, transparent, var(--bg) 24px);
+  }
+  .kbd-hint { font-size: .875rem; color: var(--muted); text-align: center; }
+  kbd {
+    font: inherit; font-size: .8125rem; padding: 1px 6px;
+    border: 1px solid var(--border-strong); border-radius: 6px; background: var(--surface);
+  }
+  @media (min-width: 640px) {
+    .start-actions { flex-direction: row; align-items: center; justify-content: space-between; }
+    .start-actions .btn { min-width: 240px; }
+    .kbd-hint { text-align: left; }
+  }
+  @media (hover: none) { .kbd-hint { display: none; } }
+
+  /* ---------- Game ---------- */
+  .game {
+    display: flex; flex-direction: column;
+    height: 100vh; height: 100dvh;
+    padding: 0 16px max(12px, env(safe-area-inset-bottom));
+  }
+  .hud {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; max-width: 1100px; margin: 0 auto;
+    padding: max(10px, env(safe-area-inset-top)) 0 4px;
+  }
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-width: 44px; min-height: 44px; padding: 0 10px;
+    border: 1px solid var(--border); border-radius: 999px;
+    background: var(--surface); color: var(--text); cursor: pointer; flex: none;
+  }
+  .icon-btn:hover { border-color: var(--border-strong); }
+  .icon-btn .btn-text { display: none; font-size: .9375rem; }
+  .stats { display: flex; flex: 1; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0; }
+  .stat {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 10px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat dt { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: .875rem; }
+  .stat dt .icon { width: 18px; height: 18px; }
+  .stat dd { margin: 0; font-weight: 650; }
+  .stat-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .stat-record dt .icon { color: var(--gold-icon); }
+  .stat-record dd { color: var(--gold-text); }
+  .stat.is-warning { border-color: var(--bad); border-width: 2px; padding: 4px 9px; }
+  .stat.is-warning dt, .stat.is-warning dd { color: var(--bad); }
+  @media (min-width: 760px) {
+    .icon-btn { padding: 0 16px; }
+    .icon-btn .btn-text { display: inline; }
+    .stat { padding: 6px 14px; }
+    .stat-name { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
+  }
+  .status {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 1.75em; margin: 4px auto 6px;
+    font-size: .9375rem; font-weight: 600; text-align: center; color: var(--muted);
+  }
+  .status .icon { width: 18px; height: 18px; stroke-width: 2.5; }
+  .status.ok { color: var(--ok); }
+  .status.bad { color: var(--bad); }
+  .status .hint { font-weight: 400; color: var(--muted); }
+
+  .board-wrap { flex: 1; min-height: 0; display: flex; overflow: auto; }
+  .board {
+    display: grid; margin: auto; padding: 8px;
+    user-select: none; -webkit-user-select: none;
+  }
+  .game.is-paused .board { visibility: hidden; }
+
+  /* ---------- Cards ---------- */
+  .card {
+    position: relative; display: block; padding: 0; border: 0; background: none;
+    border-radius: var(--card-r, 12px);
+    perspective: 900px; cursor: pointer;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  }
+  .card[aria-disabled="true"] { cursor: default; }
+  .card-inner {
+    display: block; position: relative; width: 100%; height: 100%;
+    border-radius: inherit;
+    transform-style: preserve-3d;
+    transition: transform .32s cubic-bezier(.3, .7, .3, 1);
+  }
+  .card.is-up .card-inner,
+  .card.is-matched .card-inner,
+  .card.is-wrong .card-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: inherit;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  }
+  .back {
+    background-color: var(--card-back);
+    background-image:
+      repeating-linear-gradient(45deg, var(--card-back-line) 0 2px, transparent 2px 12px),
+      repeating-linear-gradient(-45deg, var(--card-back-line) 0 2px, transparent 2px 12px);
+    box-shadow: var(--shadow);
+    transition: filter .15s;
+  }
+  .back::before {
+    content: ""; position: absolute; inset: 7%;
+    border: 1.5px solid var(--card-back-frame);
+    border-radius: calc(var(--card-r, 12px) * .6);
+  }
+  .back::after {
+    content: ""; width: 16%; aspect-ratio: 1;
+    background: var(--gold); border-radius: 3px; opacity: .9;
+    transform: rotate(45deg);
+  }
+  @media (hover: hover) {
+    .card:not(.is-up):not(.is-matched):not(.is-wrong):hover .back { filter: brightness(1.12); }
+  }
+  .front {
+    transform: rotateY(180deg);
+    gap: 4%; padding: 6%;
+    background: var(--surface);
+    border: 1px solid var(--card-edge);
+    box-shadow: var(--shadow);
+  }
+  .emoji { font-family: var(--font-emoji); font-size: var(--emoji-size, 40px); line-height: 1; }
+  .label {
+    font-size: var(--label-size, 14px); font-weight: 600; line-height: 1.15;
+    white-space: nowrap; color: var(--text);
+  }
+  .badge {
+    position: absolute; top: 6%; right: 6%;
+    width: var(--badge-size, 22px); height: var(--badge-size, 22px); border-radius: 50%;
+    display: none; place-items: center;
+  }
+  .badge .icon { width: 64%; height: 64%; stroke-width: 3; }
+  .badge .i-bad, .card.is-wrong .badge .i-ok { display: none; }
+  .card.is-wrong .badge .i-bad { display: block; }
+  .card.is-matched .front { background: var(--ok-tint); border: 2px solid var(--ok); }
+  .card.is-matched .badge { display: grid; background: var(--ok); color: var(--on-ok); }
+  .card.is-wrong .front { background: var(--bad-tint); border: 2px dashed var(--bad); }
+  .card.is-wrong .badge { display: grid; background: var(--bad); color: var(--on-bad); }
+
+  /* ---------- Pause ---------- */
+  dialog.pause {
+    width: min(92vw, 380px); padding: 28px;
+    background: var(--surface); color: var(--text);
+    border: 1px solid var(--border); border-radius: 20px;
+    box-shadow: var(--shadow); text-align: center;
+  }
+  dialog.pause::backdrop { background: rgba(245, 242, 236, .97); backdrop-filter: blur(8px); }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) dialog.pause::backdrop { background: rgba(19, 25, 28, .97); }
+  }
+  :root[data-theme="dark"] dialog.pause::backdrop { background: rgba(19, 25, 28, .97); }
+  dialog.pause h2 { font-size: 1.5rem; }
+  dialog.pause p { color: var(--muted); margin-top: 8px; }
+  .dialog-actions { display: grid; gap: 10px; margin-top: 22px; }
+
+  /* ---------- Result ---------- */
+  .result {
+    max-width: 720px; margin: 0 auto;
+    padding: max(28px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+    display: grid; gap: 16px;
+  }
+  .panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 24px; box-shadow: var(--shadow-sm);
+  }
+  @media (max-width: 480px) { .panel { padding: 20px 18px; } }
+  .kicker { color: var(--muted); font-size: .9375rem; margin-bottom: 6px; }
+  .result h2 { font-size: clamp(1.8rem, 1.3rem + 2vw, 2.3rem); }
+  .summary { font-size: 1.1875rem; margin-top: 8px; }
+  .pill-record {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 14px;
+    padding: 6px 14px; border-radius: 999px;
+    background: var(--gold-tint); color: var(--gold-text); font-weight: 650;
+  }
+  .pill-record .icon { color: var(--gold-icon); }
+  .note { color: var(--muted); margin-top: 10px; }
+  .result-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;
+    margin: 20px 0 0;
+  }
+  .result-stats > div {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .result-stats dt { font-size: .875rem; color: var(--muted); }
+  .result-stats dd { margin: 2px 0 0; font-size: 1.5rem; font-weight: 650; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .actions .btn { flex: 1 1 200px; }
+
+  /* ---------- Chart ---------- */
+  .panel h3 { font-size: 1.1875rem; }
+  .chart-sub { color: var(--muted); font-size: .9375rem; margin-top: 2px; }
+  .chart-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; font-size: .875rem; color: var(--muted); }
+  .key { display: inline-flex; align-items: center; gap: 8px; }
+  .key svg { width: 24px; height: 8px; }
+  .chart { position: relative; margin-top: 8px; }
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .chart svg:focus-visible { outline-offset: 6px; border-radius: 8px; }
+  .chart .tick { font-size: 12px; fill: var(--muted); font-variant-numeric: tabular-nums; }
+  .chart .gridline { stroke: var(--grid); stroke-width: 1; }
+  .chart .series { fill: none; stroke: var(--chart-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .chart .pt { fill: var(--chart-line); stroke: var(--surface); stroke-width: 2; }
+  .chart .record-line { stroke: var(--chart-record); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .chart .end-label { font-size: 13px; font-weight: 650; fill: var(--text); font-variant-numeric: tabular-nums; }
+  .chart .crosshair { stroke: var(--border-strong); stroke-width: 1; }
+  .tooltip {
+    position: absolute; top: 0; left: 0; pointer-events: none;
+    padding: 8px 10px; white-space: nowrap;
+    background: var(--surface); border: 1px solid var(--border-strong); border-radius: 10px;
+    box-shadow: var(--shadow); font-size: .875rem; line-height: 1.35;
+  }
+  .tooltip strong { display: block; font-size: 1rem; font-variant-numeric: tabular-nums; }
+  .tooltip span { color: var(--muted); }
+  .empty-chart { color: var(--muted); margin-top: 8px; }
+  details { margin-top: 10px; }
+  summary { cursor: pointer; color: var(--muted); font-size: .9375rem; padding: 10px 0; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9375rem; font-variant-numeric: tabular-nums; }
+  th, td { text-align: left; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  th { color: var(--muted); font-weight: 600; font-size: .8125rem; }
+  tr.is-best td:nth-child(2) { color: var(--gold-text); font-weight: 650; }
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .card-inner { transition: none; transform: none !important; }
+    .front { transform: none; opacity: 0; }
+    .face { transition: opacity .15s linear; }
+    .card.is-up .front, .card.is-matched .front, .card.is-wrong .front { opacity: 1; }
+    .card.is-up .back, .card.is-matched .back, .card.is-wrong .back { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Icon set -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5v2.2c0 1.6.8 3 2.1 3.9L12 11l1.9-1.4A4.8 4.8 0 0 0 16 5.7V3.5M8 20.5v-2.2c0-1.6.8-3 2.1-3.9L12 13l1.9 1.4a4.8 4.8 0 0 1 2.1 3.9v2.2"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-flip" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4v4h-4"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H5.5a2.5 2.5 0 0 0 2.6 3.8M16 6h2.5a2.5 2.5 0 0 1-2.6 3.8"/><path d="M12 13v3.5M9 20h6M10 16.5h4"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M9 6.5v11M15 6.5v11"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10-6.5z"/></symbol>
+  <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5M18 7a7 7 0 0 1 0 10"/></symbol>
+  <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M4 9.5h3l5-4v13l-5-4H4z"/><path d="M16 10l4.5 4.5M20.5 10L16 14.5"/></symbol>
+  <symbol id="i-contrast" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></symbol>
+</svg>
+
+<!-- Start screen -->
+<main id="screen-start" class="start">
+  <div class="topbar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+        <rect x="5" y="8" width="18" height="25" rx="4" transform="rotate(-10 14 20)" fill="var(--card-back)"/>
+        <rect x="17" y="6" width="18" height="25" rx="4" transform="rotate(8 26 18)" fill="var(--surface)" stroke="var(--gold)" stroke-width="2"/>
+        <path d="M26 14.5l2.6 3.6L26 21.7l-2.6-3.6z" transform="rotate(8 26 18)" fill="var(--gold)"/>
+      </svg>
+      <h1 id="startTitle" tabindex="-1">Memory</h1>
+    </div>
+    <div class="toolbar">
+      <button type="button" class="pill-btn" id="soundBtn" aria-pressed="false"></button>
+      <button type="button" class="pill-btn" id="appearanceBtn"></button>
+    </div>
+  </div>
+  <p class="intro">Flip two cards. If they match, they stay face up – find all the pairs!</p>
+
+  <form id="setup" novalidate>
+    <fieldset>
+      <legend>Theme</legend>
+      <div class="tiles" id="themeTiles"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Difficulty</legend>
+      <div class="tiles" id="levelTiles"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Time pressure</legend>
+      <div class="tiles modes" id="modeTiles"></div>
+    </fieldset>
+    <div class="start-actions">
+      <button type="submit" class="btn btn-primary" id="startBtn">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-play"/></svg>
+        Start
+      </button>
+      <p class="kbd-hint">Keyboard: <kbd>←</kbd><kbd>↑</kbd><kbd>→</kbd><kbd>↓</kbd> move · <kbd>Enter</kbd> flip · <kbd>Esc</kbd> pause</p>
+    </div>
+  </form>
+</main>
+
+<!-- Game -->
+<section id="screen-game" class="game" aria-labelledby="gameTitle" hidden>
+  <h2 id="gameTitle" class="sr-only">Game</h2>
+  <header class="hud">
+    <button type="button" class="icon-btn" id="pauseBtn" aria-label="Pause (Esc)">
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-pause"/></svg>
+      <span class="btn-text" aria-hidden="true">Pause</span>
+    </button>
+    <dl class="stats">
+      <div class="stat" id="statTime">
+        <dt><svg class="icon" aria-hidden="true" focusable="false"><use id="timeIcon" href="#i-clock"/></svg><span class="stat-name" id="timeName">Time</span></dt>
+        <dd id="hudTime">00:00</dd>
+      </div>
+      <div class="stat">
+        <dt><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-target"/></svg><span class="stat-name">Pairs</span></dt>
+        <dd id="hudPairs">0/8</dd>
+      </div>
+      <div class="stat">
+        <dt><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-flip"/></svg><span class="stat-name">Flips</span></dt>
+        <dd id="hudFlips">0</dd>
+      </div>
+      <div class="stat">
+        <dt><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-x"/></svg><span class="stat-name">Misses</span></dt>
+        <dd id="hudErrors">0</dd>
+      </div>
+      <div class="stat stat-record" id="statRecord">
+        <dt><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-trophy"/></svg><span class="stat-name">Best</span></dt>
+        <dd id="hudRecord">–</dd>
+      </div>
+    </dl>
+  </header>
+  <p class="status" id="status" aria-hidden="true"></p>
+  <div class="sr-only" id="live" aria-live="polite" aria-atomic="true"></div>
+  <p class="sr-only" id="boardHelp">Use the arrow keys to move between cards, Enter or Space to flip. Esc pauses.</p>
+  <div class="board-wrap" id="boardWrap">
+    <div class="board" id="board" role="group" aria-describedby="boardHelp"></div>
+  </div>
+</section>
+
+<!-- Pause -->
+<dialog class="pause" id="pauseDialog" aria-labelledby="pauseTitle">
+  <h2 id="pauseTitle">Paused</h2>
+  <p>The clock is stopped and the cards are hidden.</p>
+  <div class="dialog-actions">
+    <button type="button" class="btn btn-primary" id="resumeBtn" autofocus>Resume</button>
+    <button type="button" class="btn btn-secondary" id="restartBtn">Restart</button>
+    <button type="button" class="btn btn-secondary" id="quitBtn">Back to settings</button>
+  </div>
+</dialog>
+
+<!-- Result -->
+<main id="screen-result" class="result" hidden>
+  <section class="panel" aria-labelledby="resultTitle">
+    <p class="kicker" id="resultKicker"></p>
+    <h2 id="resultTitle" tabindex="-1"></h2>
+    <p class="summary" id="resultSummary"></p>
+    <p class="pill-record" id="resultPill" hidden>
+      <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-trophy"/></svg>
+      New best!
+    </p>
+    <p class="note" id="resultNote"></p>
+    <dl class="result-stats" id="resultStats"></dl>
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="againBtn" aria-describedby="resultSummary resultNote">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-flip"/></svg>
+        Play again
+      </button>
+      <button type="button" class="btn btn-secondary" id="settingsBtn">Settings</button>
+    </div>
+  </section>
+  <section class="panel" aria-labelledby="chartTitle">
+    <h3 id="chartTitle">Your progress</h3>
+    <p class="chart-sub" id="chartSub"></p>
+    <div id="chartArea">
+      <div class="chart-legend" id="chartLegend">
+        <span class="key"><svg viewBox="0 0 24 8" aria-hidden="true"><path d="M1 4h22" stroke="var(--chart-line)" stroke-width="2" stroke-linecap="round"/></svg>Time per game</span>
+        <span class="key" id="recordKey"><svg viewBox="0 0 24 8" aria-hidden="true"><path d="M1 4h22" stroke="var(--chart-record)" stroke-width="1.5" stroke-dasharray="5 4"/></svg><span id="recordKeyText"></span></span>
+      </div>
+      <div class="chart" id="chart"></div>
+      <details>
+        <summary>View as table</summary>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th scope="col">#</th><th scope="col">Time</th><th scope="col">Flips</th><th scope="col">Misses</th><th scope="col">Mode</th><th scope="col">Date</th></tr></thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+    <p class="empty-chart" id="chartEmpty" hidden></p>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  // ---------- Settings, data ----------
+  const LEVELS = {
+    easy:   { name: 'Easy', pairs: 4,  limitSec: 45 },
+    normal: { name: 'Normal', pairs: 8,  limitSec: 90 },
+    // peekSec: after this many seconds a wrong pair flips back by itself
+    hard:   { name: 'Hard',  pairs: 12, limitSec: 150, peekSec: 2 },
+    pro:    { name: 'Pro',    pairs: 18, limitSec: 240, peekSec: 2 },
+  };
+  const MODES = {
+    calm:  { name: 'Relaxed', desc: () => 'No clock in sight – you see your time at the end.' },
+    watch: { name: 'Stopwatch', desc: () => 'Watch the time tick by.' },
+    limit: { name: 'Time limit', desc: (lv) => `${LEVELS[lv].limitSec} s on the clock (${LEVELS[lv].name}). The clock starts at your first flip.` },
+  };
+  const THEMES = {
+    animals: { name: 'Animals', items: [
+      ['🦊', 'Fox'], ['🐢', 'Turtle'], ['🦉', 'Owl'], ['🐘', 'Elephant'], ['🦒', 'Giraffe'],
+      ['🐧', 'Penguin'], ['🦁', 'Lion'], ['🐸', 'Frog'], ['🐙', 'Octopus'], ['🦋', 'Butterfly'],
+      ['🐝', 'Bee'], ['🐌', 'Snail'], ['🦀', 'Crab'], ['🐬', 'Dolphin'], ['🐰', 'Bunny'],
+      ['🐼', 'Panda'], ['🦓', 'Zebra'], ['🦔', 'Hedgehog'], ['🐞', 'Ladybug'], ['🦜', 'Parrot'], ['🐨', 'Koala'],
+    ] },
+    food: { name: 'Fruit & Food', items: [
+      ['🍎', 'Apple'], ['🍌', 'Banana'], ['🍇', 'Grapes'], ['🍉', 'Watermelon'], ['🍓', 'Strawberry'],
+      ['🍋', 'Lemon'], ['🍑', 'Peach'], ['🍍', 'Pineapple'], ['🥝', 'Kiwi'], ['🍐', 'Pear'],
+      ['🥕', 'Carrot'], ['🌽', 'Corn'], ['🌶️', 'Chili'], ['🥦', 'Broccoli'], ['🥐', 'Croissant'],
+      ['🧀', 'Cheese'], ['🍕', 'Pizza'], ['🍩', 'Donut'], ['🥨', 'Pretzel'], ['🍦', 'Ice cream'], ['🥚', 'Egg'],
+    ] },
+    things: { name: 'Transport & Objects', items: [
+      ['🚲', 'Bicycle'], ['✈️', 'Airplane'], ['🚀', 'Rocket'], ['🚂', 'Train'], ['🚗', 'Car'],
+      ['🚌', 'Bus'], ['⛵', 'Sailboat'], ['🚜', 'Tractor'], ['🚑', 'Ambulance'], ['🛴', 'Scooter'],
+      ['☂️', 'Umbrella'], ['⏰', 'Alarm'], ['🎈', 'Balloon'], ['🔑', 'Key'], ['💡', 'Bulb'],
+      ['🎸', 'Guitar'], ['⚓', 'Anchor'], ['🎁', 'Gift'], ['✂️', 'Scissors'], ['👑', 'Crown'],
+      ['🔔', 'Bell'], ['🧭', 'Compass'],
+    ] },
+    nature: { name: 'Nature & Weather', items: [
+      ['🌵', 'Cactus'], ['🌈', 'Rainbow'], ['❄️', 'Snowflake'], ['☀️', 'Sun'], ['🌙', 'Moon'],
+      ['⭐', 'Star'], ['🌪️', 'Tornado'], ['🍁', 'Leaf'], ['🌷', 'Tulip'], ['🍄', 'Mushroom'],
+      ['🌲', 'Pine'], ['🌴', 'Palm'], ['🌊', 'Wave'], ['🔥', 'Fire'], ['💧', 'Drop'],
+      ['☁️', 'Cloud'], ['🌋', 'Volcano'], ['⛄', 'Snowman'], ['🍀', 'Clover'], ['🐚', 'Shell'], ['🌍', 'Globe'],
+    ] },
+  };
+  const APPEARANCES = { auto: 'Auto', light: 'Light', dark: 'Dark' };
+  const HISTORY_SIZE = 10;
+  const STORE_KEY = 'memoria.v1';
+
+  // ---------- Storage (works without localStorage, it just won't save) ----------
+  const store = (() => {
+    let data = { settings: {}, records: {}, history: {} };
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
+      if (saved && typeof saved === 'object') {
+        data = {
+          settings: saved.settings || {},
+          records: saved.records || {},
+          history: saved.history || {},
+        };
+      }
+    } catch { /* unavailable or corrupted */ }
+    return {
+      data,
+      save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch { /* not saved */ } },
+    };
+  })();
+
+  const pick = (value, allowed, fallback) => (value in allowed ? value : fallback);
+  const saved = store.data.settings;
+  const settings = {
+    theme: pick(saved.theme, THEMES, 'animals'),
+    level: pick(saved.level, LEVELS, 'normal'),
+    mode: pick(saved.mode, MODES, 'watch'),
+    sound: saved.sound === true,
+    appearance: pick(saved.appearance, APPEARANCES, 'auto'),
+  };
+  function saveSettings() { store.data.settings = { ...settings }; store.save(); }
+
+  // ---------- Helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function h(tag, props = {}, ...children) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (v === true) el.setAttribute(k, '');
+      else if (v !== false && v != null) el.setAttribute(k, v);
+    }
+    el.append(...children.filter((c) => c != null));
+    return el;
+  }
+  function svgEl(tag, attrs = {}) {
+    const el = document.createElementNS(SVGNS, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    return el;
+  }
+  function icon(id, cls = 'icon') {
+    const s = svgEl('svg', { class: cls, 'aria-hidden': 'true', focusable: 'false' });
+    s.append(svgEl('use', { href: '#i-' + id }));
+    return s;
+  }
+
+  const pad = (n) => String(n).padStart(2, '0');
+  function fmtClock(ms) {
+    const s = Math.floor(ms / 1000);
+    return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
+  }
+  function fmtPrecise(ms) {
+    const t = Math.floor(ms / 100);
+    const s = Math.floor(t / 10);
+    return `${pad(Math.floor(s / 60))}:${pad(s % 60)}.${t % 10}`;
+  }
+  function fmtTenths(ms) { return (Math.floor(ms / 100) / 10).toFixed(1); }
+  function fmtSpoken(ms) {
+    const t = Math.floor(ms / 100);
+    const m = Math.floor(t / 600);
+    const rest = ((t - m * 600) / 10).toFixed(1);
+    return m ? `${m} min ${rest} s` : `${rest} s`;
+  }
+  const flipsText = (n) => `${n} ${n === 1 ? 'flip' : 'flips'}`;
+  const dateFmt = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  function randomInt(n) {
+    if (window.crypto?.getRandomValues) {
+      const a = new Uint32Array(1);
+      crypto.getRandomValues(a);
+      return a[0] % n;
+    }
+    return Math.floor(Math.random() * n);
+  }
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = randomInt(i + 1);
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // ---------- Sound (Web Audio, no audio files) ----------
+  let audioCtx = null;
+  const TONES = {
+    match: { type: 'sine', notes: [[660, 0, 0.1], [880, 0.08, 0.14]] },
+    miss:  { type: 'triangle', notes: [[250, 0, 0.18, 190]] },
+    win:   { type: 'sine', notes: [[523, 0, 0.14], [659, 0.1, 0.14], [784, 0.2, 0.14], [1047, 0.3, 0.3]] },
+  };
+  function sound(kind) {
+    if (!settings.sound) return;
+    try {
+      audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const { type, notes } = TONES[kind];
+      const t = audioCtx.currentTime;
+      for (const [freq, delay, len, slideTo] of notes) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, t + delay);
+        if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, t + delay + len);
+        gain.gain.setValueAtTime(0.0001, t + delay);
+        gain.gain.exponentialRampToValueAtTime(0.06, t + delay + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + delay + len);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t + delay);
+        osc.stop(t + delay + len + 0.03);
+      }
+    } catch { /* no sound */ }
+  }
+
+  // ---------- Screens ----------
+  const screens = { start: $('screen-start'), game: $('screen-game'), result: $('screen-result') };
+  const TITLES = { start: 'Memory', game: 'Game – Memory', result: 'Result – Memory' };
+  function showScreen(name) {
+    for (const [key, el] of Object.entries(screens)) el.hidden = key !== name;
+    document.title = TITLES[name];
+    window.scrollTo(0, 0);
+  }
+
+  // ---------- Appearance ----------
+  function applyAppearance() {
+    const root = document.documentElement;
+    if (settings.appearance === 'auto') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', settings.appearance);
+    const btn = $('appearanceBtn');
+    btn.replaceChildren(icon('contrast'), document.createTextNode(APPEARANCES[settings.appearance]));
+    btn.setAttribute('aria-label', `Appearance: ${APPEARANCES[settings.appearance]}. Click to change.`);
+  }
+  function renderSoundBtn() {
+    const btn = $('soundBtn');
+    btn.replaceChildren(icon(settings.sound ? 'sound-on' : 'sound-off'), document.createTextNode(settings.sound ? 'Sound on' : 'Sound off'));
+    btn.setAttribute('aria-pressed', String(settings.sound));
+    btn.setAttribute('aria-label', 'Sound effects');
+  }
+  $('appearanceBtn').addEventListener('click', () => {
+    const order = Object.keys(APPEARANCES);
+    settings.appearance = order[(order.indexOf(settings.appearance) + 1) % order.length];
+    applyAppearance();
+    saveSettings();
+  });
+  $('soundBtn').addEventListener('click', () => {
+    settings.sound = !settings.sound;
+    renderSoundBtn();
+    saveSettings();
+    sound('match');
+  });
+
+  // ---------- Start screen ----------
+  // The tile name is its title (.tile-title), the other visible text is its description.
+  function buildTiles(container, name, entries, current) {
+    container.replaceChildren(...entries.map(([value, parts]) => {
+      const input = h('input', { type: 'radio', name, value });
+      input.checked = value === current;
+      const described = [];
+      parts.forEach((part, k) => {
+        if (part.getAttribute('aria-hidden')) return;
+        part.id ||= `${name}-${value}-${k}`;
+        if (part.classList.contains('tile-title')) input.setAttribute('aria-labelledby', part.id);
+        else described.push(part.id);
+      });
+      if (described.length) input.setAttribute('aria-describedby', described.join(' '));
+      const body = h('span', { class: 'tile-body' }, h('span', { class: 'check' }, icon('check')), ...parts);
+      return h('label', { class: 'tile' }, input, body);
+    }));
+  }
+  function buildStart() {
+    buildTiles($('themeTiles'), 'theme', Object.entries(THEMES).map(([key, t]) => [key, [
+      h('span', { class: 'tile-sample', 'aria-hidden': 'true', text: t.items.slice(0, 3).map((i) => i[0]).join('') }),
+      h('span', { class: 'tile-title', text: t.name }),
+    ]]), settings.theme);
+
+    buildTiles($('levelTiles'), 'level', Object.entries(LEVELS).map(([key, lv]) => [key, [
+      h('span', { class: 'tile-title', text: lv.name }),
+      h('span', { class: 'tile-meta', text: `${lv.pairs} pairs · ${lv.pairs * 2} cards` }),
+      lv.peekSec ? h('span', { class: 'tile-meta', text: `Wrong pair: ${lv.peekSec} s` }) : null,
+      h('span', { class: 'tile-record', id: `rec-${key}` }),
+    ].filter(Boolean)]), settings.level);
+
+    buildTiles($('modeTiles'), 'mode', Object.entries(MODES).map(([key, m]) => [key, [
+      h('span', { class: 'tile-title', text: m.name }),
+      h('span', { class: 'tile-meta', id: `mode-${key}` }),
+    ]]), settings.mode);
+
+    updateStart();
+  }
+  function updateStart() {
+    for (const key of Object.keys(LEVELS)) {
+      const rec = store.data.records[key];
+      const el = $(`rec-${key}`);
+      el.classList.toggle('has', rec != null);
+      el.replaceChildren(icon('trophy'), document.createTextNode(rec != null ? `Best: ${fmtPrecise(rec)}` : 'No best yet'));
+    }
+    for (const [key, m] of Object.entries(MODES)) $(`mode-${key}`).textContent = m.desc(settings.level);
+  }
+  $('setup').addEventListener('change', (e) => {
+    const { name, value } = e.target;
+    if (name in settings && value) {
+      settings[name] = value;
+      saveSettings();
+      updateStart();
+    }
+  });
+  $('setup').addEventListener('submit', (e) => {
+    e.preventDefault();
+    newGame();
+  });
+
+  // ---------- Game ----------
+  const board = $('board');
+  const boardWrap = $('boardWrap');
+  const layout = { cols: 4, rows: 4 };
+  let game = null;
+  let timer = null;
+
+  function deal(themeKey, pairs) {
+    const chosen = shuffle(THEMES[themeKey].items.slice()).slice(0, pairs);
+    return shuffle(chosen.flatMap(([emoji, label], key) => [0, 1].map(() => ({ key, emoji, label, state: 'down' }))));
+  }
+
+  function newGame() {
+    stopTimer();
+    const lv = LEVELS[settings.level];
+    game = {
+      level: settings.level, theme: settings.theme, mode: settings.mode,
+      pairs: lv.pairs, limitMs: lv.limitSec * 1000,
+      peekMs: (lv.peekSec || 0) * 1000, wrongTimer: 0,
+      cards: deal(settings.theme, lv.pairs),
+      maxLabel: Math.max(...THEMES[settings.theme].items.map((i) => i[1].length)),
+      first: -1, wrong: null,
+      flips: 0, errors: 0, found: 0,
+      acc: 0, t0: 0, running: false, started: false,
+      paused: false, over: false, warned: {}, focus: 0,
+    };
+    screens.game.classList.remove('is-paused');
+    board.inert = false;
+    buildBoard();
+    setupHud();
+    setStatus(game.mode === 'limit' ? 'The clock starts at your first flip.' : 'Flip two cards!');
+    announce('');
+    showScreen('game');
+    layoutBoard();
+    timer = setInterval(tick, 200);
+    board.children[0]?.focus();
+  }
+
+  function buildBoard() {
+    board.setAttribute('aria-label', `Game board, ${game.cards.length} cards`);
+    board.replaceChildren(...game.cards.map((card, i) => {
+      const badge = h('span', { class: 'badge' }, icon('check', 'icon i-ok'), icon('x', 'icon i-bad'));
+      const front = h('span', { class: 'face front' },
+        h('span', { class: 'emoji', text: card.emoji }),
+        h('span', { class: 'label', text: card.label }),
+        badge);
+      const inner = h('span', { class: 'card-inner', 'aria-hidden': 'true' }, h('span', { class: 'face back' }), front);
+      return h('button', { type: 'button', class: 'card', 'data-i': i, tabindex: i === 0 ? '0' : '-1' }, inner);
+    }));
+    game.cards.forEach((_, i) => renderCard(i));
+  }
+
+  function cardLabel(i) {
+    const c = game.cards[i];
+    const pos = `row ${Math.floor(i / layout.cols) + 1}, column ${(i % layout.cols) + 1}`;
+    switch (c.state) {
+      case 'up': return `${c.label}, face up, ${pos}`;
+      case 'matched': return `${c.label}, matched, ${pos}`;
+      case 'wrong': return `${c.label}, not a match, ${pos}`;
+      default: return `Face-down card, ${pos}`;
+    }
+  }
+  function renderCard(i) {
+    const el = board.children[i];
+    const { state } = game.cards[i];
+    el.classList.toggle('is-up', state === 'up');
+    el.classList.toggle('is-matched', state === 'matched');
+    el.classList.toggle('is-wrong', state === 'wrong');
+    el.setAttribute('aria-disabled', String(state === 'matched'));
+    el.setAttribute('aria-label', cardLabel(i));
+  }
+
+  // Work out the largest comfortable card size for the available space.
+  function layoutBoard() {
+    if (!game || screens.game.hidden) return;
+    const n = game.cards.length;
+    const W = boardWrap.clientWidth - 16;
+    const H = boardWrap.clientHeight - 16;
+    if (W <= 0 || H <= 0) return;
+    const gap = Math.round(Math.max(6, Math.min(14, Math.min(W, H) * 0.018)));
+    const MAX_W = 150, MAX_H = 180, AMIN = 0.72, AMAX = 1.25, MIN_SIDE = 56;
+    const fit = (cols) => {
+      const rows = n / cols;
+      let w = Math.min((W - gap * (cols - 1)) / cols, MAX_W);
+      let h = Math.min((H - gap * (rows - 1)) / rows, MAX_H);
+      if (w / h > AMAX) w = h * AMAX;
+      if (w / h < AMIN) h = w / AMIN;
+      return { cols, rows, w: Math.floor(w), h: Math.floor(h) };
+    };
+    const options = [];
+    for (let c = 2; c <= Math.min(12, n); c++) if (n % c === 0) options.push(fit(c));
+    const score = (o) => Math.min(o.w, o.h) + (o.w * o.h) / 1e6;
+    let best = options.reduce((a, b) => (score(b) > score(a) ? b : a));
+    if (Math.min(best.w, best.h) < MIN_SIDE) {
+      // Very small screen: prefer a scrollable board with comfortable cards.
+      const byWidth = options
+        .map((o) => ({ ...o, w: Math.floor(Math.min((W - gap * (o.cols - 1)) / o.cols, MAX_W)) }))
+        .filter((o) => o.w >= 72);
+      const chosen = byWidth.length ? byWidth[byWidth.length - 1] : options[0];
+      best = { ...chosen, h: Math.floor(chosen.w / 0.85) };
+    }
+    const colsChanged = layout.cols !== best.cols;
+    layout.cols = best.cols;
+    layout.rows = best.rows;
+    const side = Math.min(best.w, best.h);
+    const label = Math.max(11, Math.min(17, best.h * 0.16, (best.w - 10) / (game.maxLabel * 0.6)));
+    const emoji = Math.min(best.w * 0.5, (best.h - label * 1.5) * 0.7);
+    board.style.gridTemplateColumns = `repeat(${best.cols}, ${best.w}px)`;
+    board.style.gridAutoRows = `${best.h}px`;
+    board.style.gap = `${gap}px`;
+    board.style.setProperty('--card-r', `${Math.round(Math.max(8, Math.min(14, side * 0.1)))}px`);
+    board.style.setProperty('--label-size', `${label.toFixed(1)}px`);
+    board.style.setProperty('--emoji-size', `${Math.round(emoji)}px`);
+    board.style.setProperty('--badge-size', `${Math.round(Math.max(16, Math.min(26, side * 0.2)))}px`);
+    if (colsChanged) game.cards.forEach((_, i) => renderCard(i));
+  }
+  let layoutFrame = 0;
+  new ResizeObserver(() => {
+    cancelAnimationFrame(layoutFrame);
+    layoutFrame = requestAnimationFrame(layoutBoard);
+  }).observe(boardWrap);
+
+  // ---------- Clock ----------
+  const now = () => performance.now();
+  const elapsed = () => game.acc + (game.running ? now() - game.t0 : 0);
+  function startClock() { game.t0 = now(); game.running = true; game.started = true; }
+  function stopClock() { if (game.running) { game.acc += now() - game.t0; game.running = false; } }
+  function stopTimer() { clearInterval(timer); timer = null; }
+
+  function tick() {
+    if (!game || game.over || !game.running) return;
+    if (game.mode === 'limit') {
+      const remaining = game.limitMs - elapsed();
+      if (remaining <= 0) { timeUp(); return; }
+      for (const sec of [30, 10]) {
+        if (remaining <= sec * 1000 && game.limitMs > sec * 2000 && !game.warned[sec]) {
+          game.warned[sec] = true;
+          announce(`${sec} seconds left.`);
+        }
+      }
+    }
+    updateClock();
+  }
+
+  // ---------- Top bar, status line ----------
+  function setupHud() {
+    const calm = game.mode === 'calm';
+    $('statTime').hidden = calm;
+    $('statRecord').hidden = calm;
+    $('timeIcon').setAttribute('href', game.mode === 'limit' ? '#i-hourglass' : '#i-clock');
+    $('timeName').textContent = game.mode === 'limit' ? 'Time left' : 'Time';
+    updateHud();
+  }
+  function updateHud() {
+    $('hudPairs').textContent = `${game.found}/${game.pairs}`;
+    $('hudFlips').textContent = game.flips;
+    $('hudErrors').textContent = game.errors;
+    const rec = store.data.records[game.level];
+    $('hudRecord').textContent = rec != null ? fmtPrecise(rec) : '–';
+    updateClock();
+  }
+  function updateClock() {
+    if (game.mode === 'calm') return;
+    let text;
+    let warn = false;
+    if (game.mode === 'limit') {
+      const remaining = Math.max(0, game.limitMs - elapsed());
+      text = fmtClock(Math.ceil(remaining / 1000) * 1000);
+      warn = game.started && remaining <= 10000;
+    } else {
+      text = fmtClock(elapsed());
+    }
+    const el = $('hudTime');
+    if (el.textContent !== text) el.textContent = text;
+    $('statTime').classList.toggle('is-warning', warn);
+  }
+  function setStatus(text, kind = '', hint = '') {
+    const el = $('status');
+    el.className = 'status' + (kind ? ' ' + kind : '');
+    const parts = [];
+    if (kind === 'ok') parts.push(icon('check'));
+    if (kind === 'bad') parts.push(icon('x'));
+    parts.push(document.createTextNode(text));
+    if (hint) parts.push(h('span', { class: 'hint', text: hint }));
+    el.replaceChildren(...parts);
+  }
+  let announceTimer = 0;
+  function announce(text) {
+    const live = $('live');
+    clearTimeout(announceTimer);
+    live.textContent = '';
+    if (text) announceTimer = setTimeout(() => { live.textContent = text; }, 40);
+  }
+
+  // ---------- Flipping ----------
+  function clearWrong() {
+    clearTimeout(game.wrongTimer);
+    const [a, b] = game.wrong;
+    game.cards[a].state = game.cards[b].state = 'down';
+    game.wrong = null;
+    renderCard(a);
+    renderCard(b);
+    setStatus('');
+  }
+
+  function activate(i) {
+    const g = game;
+    if (!g || g.over || g.paused) return;
+    if (g.wrong) clearWrong();
+    const card = g.cards[i];
+    if (card.state !== 'down') return;
+    if (!g.started) startClock();
+
+    card.state = 'up';
+    g.flips++;
+    if (g.first < 0) {
+      g.first = i;
+      renderCard(i);
+      announce(card.label);
+    } else {
+      const j = g.first;
+      const other = g.cards[j];
+      g.first = -1;
+      if (other.key === card.key) {
+        other.state = card.state = 'matched';
+        g.found++;
+        const msg = `Match! ${card.label} – ${g.found}/${g.pairs}`;
+        setStatus(msg, 'ok');
+        announce(msg);
+        sound('match');
+      } else {
+        other.state = card.state = 'wrong';
+        g.errors++;
+        g.wrong = [j, i];
+        // Hard/Pro: visible for at most peekMs; the next click flips it back sooner.
+        if (g.peekMs) {
+          g.wrongTimer = setTimeout(() => {
+            if (game === g && g.wrong && !g.over && !g.paused) clearWrong();
+          }, g.peekMs);
+        }
+        const hint = g.peekMs ? ` · visible for ${g.peekMs / 1000} s` : ' · click to continue';
+        setStatus(`No match: ${other.label} – ${card.label}`, 'bad', g.errors === 1 ? hint : '');
+        announce(`${card.label}. No match: ${other.label} and ${card.label}.`);
+        sound('miss');
+      }
+      renderCard(i);
+      renderCard(j);
+    }
+    updateHud();
+    if (g.found === g.pairs) finish(true);
+  }
+
+  board.addEventListener('click', (e) => {
+    const el = e.target.closest('.card');
+    if (el) activate(Number(el.dataset.i));
+    else if (game?.wrong && !game.over) clearWrong();
+  });
+  board.addEventListener('focusin', (e) => {
+    const el = e.target.closest('.card');
+    if (!el) return;
+    const i = Number(el.dataset.i);
+    if (board.children[game.focus]) board.children[game.focus].tabIndex = -1;
+    el.tabIndex = 0;
+    game.focus = i;
+  });
+  board.addEventListener('keydown', (e) => {
+    const el = e.target.closest('.card');
+    if (!el || !game) return;
+    const i = Number(el.dataset.i);
+    const n = game.cards.length;
+    const c = layout.cols;
+    let j;
+    switch (e.key) {
+      case 'ArrowRight': j = i % c < c - 1 ? i + 1 : i; break;
+      case 'ArrowLeft': j = i % c > 0 ? i - 1 : i; break;
+      case 'ArrowDown': j = i + c < n ? i + c : i; break;
+      case 'ArrowUp': j = i - c >= 0 ? i - c : i; break;
+      case 'Home': j = e.ctrlKey ? 0 : i - (i % c); break;
+      case 'End': j = e.ctrlKey ? n - 1 : Math.min(n - 1, i - (i % c) + c - 1); break;
+      default: return;
+    }
+    e.preventDefault();
+    board.children[j].focus();
+  });
+
+  // ---------- Pause ----------
+  const pauseDialog = $('pauseDialog');
+  function pause() {
+    if (!game || game.over || game.paused || screens.game.hidden) return;
+    stopClock();
+    // Peek-limited wrong pair: no extra looking while paused.
+    if (game.wrong && game.peekMs) clearWrong();
+    game.paused = true;
+    screens.game.classList.add('is-paused');
+    pauseDialog.showModal();
+  }
+  function resume() {
+    if (!game?.paused) return;
+    game.paused = false;
+    screens.game.classList.remove('is-paused');
+    if (pauseDialog.open) pauseDialog.close();
+    if (game.started) startClock();
+    board.children[game.focus]?.focus();
+  }
+  function leaveGame() {
+    stopTimer();
+    if (game) { clearTimeout(game.wrongTimer); game.over = true; game.paused = false; }
+    if (pauseDialog.open) pauseDialog.close();
+    screens.game.classList.remove('is-paused');
+  }
+  $('pauseBtn').addEventListener('click', pause);
+  $('resumeBtn').addEventListener('click', resume);
+  pauseDialog.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); resume(); }
+  });
+  pauseDialog.addEventListener('cancel', (e) => { e.preventDefault(); resume(); });
+  // If the browser closes the dialog some other way (e.g. Android "back"), the game resumes anyway.
+  pauseDialog.addEventListener('close', () => { if (game?.paused) resume(); });
+  $('restartBtn').addEventListener('click', () => { leaveGame(); newGame(); });
+  $('quitBtn').addEventListener('click', () => { leaveGame(); goToStart(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !screens.game.hidden && !pauseDialog.open) pause();
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && game?.started && !game.over) pause();
+  });
+
+  // ---------- Game over ----------
+  function timeUp() {
+    game.acc = game.limitMs;
+    game.running = false;
+    updateClock();
+    setStatus("Time's up", 'bad');
+    announce("Time's up.");
+    finish(false);
+  }
+
+  function finish(win) {
+    const g = game;
+    stopClock();
+    stopTimer();
+    g.over = true;
+    board.inert = true;
+    const result = { win, ms: win ? g.acc : g.limitMs, prev: null, isNew: false };
+    if (win) {
+      const prev = store.data.records[g.level] ?? null;
+      result.prev = prev;
+      result.isNew = prev == null || g.acc < prev;
+      if (result.isNew) store.data.records[g.level] = g.acc;
+      const hist = (store.data.history[g.level] ||= []);
+      hist.push({ ms: g.acc, flips: g.flips, errors: g.errors, mode: g.mode, theme: g.theme, date: Date.now() });
+      if (hist.length > HISTORY_SIZE) hist.splice(0, hist.length - HISTORY_SIZE);
+      store.save();
+      updateHud();
+      setTimeout(() => sound('win'), 250);
+    }
+    const delay = reducedMotion.matches ? 400 : 900;
+    setTimeout(() => { if (game === g) showResult(result); }, delay);
+  }
+
+  function showResult(r) {
+    const g = game;
+    const lv = LEVELS[g.level];
+    $('resultKicker').textContent = `${lv.name} · ${THEMES[g.theme].name} · ${MODES[g.mode].name}`;
+    $('resultPill').hidden = !r.isNew;
+    let title;
+    let summary;
+    let note;
+    if (r.win) {
+      title = g.errors === 0 ? 'Flawless!' : 'Nice work!';
+      summary = `${g.pairs} pairs – ${flipsText(g.flips)} – ${fmtSpoken(r.ms)}.`;
+      if (r.isNew && r.prev != null) {
+        const gain = fmtTenths(r.prev - r.ms);
+        note = gain === '0.0'
+          ? `A hair faster than your previous best (${fmtPrecise(r.prev)}).`
+          : `${gain} s faster than your previous best (${fmtPrecise(r.prev)}).`;
+      }
+      else if (r.isNew) note = "That's your first best at this level – now you have something to beat.";
+      else {
+        const diff = fmtTenths(r.ms - r.prev);
+        note = diff === '0.0'
+          ? `A hair away from your best (${fmtPrecise(r.prev)}). One more round?`
+          : `${diff} s off your best (${fmtPrecise(r.prev)}). One more round?`;
+      }
+    } else {
+      title = "Time's up";
+      summary = `${g.found}/${g.pairs} pairs – ${flipsText(g.flips)} – ${fmtSpoken(r.ms)}.`;
+      note = g.found >= g.pairs * 0.75
+        ? 'So close! Give it another go.'
+        : 'Try again – or play in Stopwatch mode, with no time limit.';
+    }
+    $('resultTitle').textContent = title;
+    $('resultSummary').textContent = summary;
+    $('resultNote').textContent = note;
+
+    const attempts = g.found + g.errors;
+    const accuracy = attempts ? Math.round((g.found / attempts) * 100) : 0;
+    const stats = [
+      ['Time', fmtPrecise(r.ms)],
+      ['Flips', String(g.flips)],
+      ['Misses', String(g.errors)],
+      ['Accuracy', `${accuracy}%`],
+    ];
+    $('resultStats').replaceChildren(...stats.map(([k, v]) => h('div', {}, h('dt', { text: k }), h('dd', { text: v }))));
+
+    showScreen('result');
+    renderHistory(g.level);
+    $('againBtn').focus();
+  }
+
+  $('againBtn').addEventListener('click', newGame);
+  $('settingsBtn').addEventListener('click', goToStart);
+  function goToStart() {
+    game = null;
+    updateStart();
+    showScreen('start');
+    $('startTitle').focus();
+  }
+
+  // ---------- History, chart ----------
+  let chartLevel = null;
+  function renderHistory(levelKey) {
+    chartLevel = levelKey;
+    const hist = store.data.history[levelKey] || [];
+    const rec = store.data.records[levelKey] ?? null;
+    const enough = hist.length >= 2;
+    $('chartArea').hidden = !enough;
+    $('chartEmpty').hidden = enough;
+    $('chartEmpty').textContent = hist.length
+      ? 'Play one more round at this level and your progress shows up here.'
+      : 'No finished games at this level yet. Finish one and you can follow your progress here.';
+    $('chartSub').textContent = enough
+      ? `${LEVELS[levelKey].name} level · times of your last ${hist.length} finished games`
+      : `${LEVELS[levelKey].name} level`;
+    if (!enough) return;
+    $('recordKey').hidden = rec == null;
+    $('recordKeyText').textContent = rec != null ? `Best: ${fmtPrecise(rec)}` : '';
+    renderChart(hist, rec);
+
+    const best = Math.min(...hist.map((x) => x.ms));
+    $('historyBody').replaceChildren(...hist.map((x, i) => h('tr', { class: x.ms === best ? 'is-best' : '' },
+      h('td', { text: String(i + 1) }),
+      h('td', { text: fmtPrecise(x.ms) }),
+      h('td', { text: String(x.flips) }),
+      h('td', { text: String(x.errors) }),
+      h('td', { text: MODES[x.mode]?.name ?? '' }),
+      h('td', { text: dateFmt.format(x.date) }),
+    )));
+  }
+
+  function renderChart(hist, rec) {
+    const box = $('chart');
+    box.replaceChildren();
+    const n = hist.length;
+    const W = Math.max(280, Math.round(box.clientWidth));
+    const H = 190;
+    const m = { t: 14, r: 70, b: 28, l: 50 };
+    const pw = W - m.l - m.r;
+    const ph = H - m.t - m.b;
+    const vals = hist.map((x) => x.ms);
+    let lo = Math.min(...vals, rec ?? Infinity);
+    let hi = Math.max(...vals, rec ?? -Infinity);
+    const span = Math.max(hi - lo, 4000);
+    const step = [1, 2, 5, 10, 15, 20, 30, 60, 120, 300, 600].map((s) => s * 1000).find((s) => span / s <= 4) ?? 600000;
+    lo = Math.max(0, Math.floor((lo - span * 0.15) / step) * step);
+    hi = Math.ceil((hi + span * 0.15) / step) * step;
+    const X = (i) => m.l + (n === 1 ? pw / 2 : (i * pw) / (n - 1));
+    const Y = (v) => m.t + ph - ((v - lo) / (hi - lo)) * ph;
+    const axisLabel = (ms) => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${pad(s % 60)}`; };
+
+    const last = vals[n - 1];
+    const svg = svgEl('svg', {
+      viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img', tabindex: '0',
+      'aria-label': `Chart of times, last ${n} games. Best: ${fmtPrecise(Math.min(...vals))}, latest: ${fmtPrecise(last)}. Use the arrow keys to step through the games.`,
+    });
+    for (let v = lo; v <= hi + 1; v += step) {
+      svg.append(svgEl('line', { class: 'gridline', x1: m.l, x2: m.l + pw, y1: Y(v), y2: Y(v) }));
+      const t = svgEl('text', { class: 'tick', x: m.l - 10, y: Y(v) + 4, 'text-anchor': 'end' });
+      t.textContent = axisLabel(v);
+      svg.append(t);
+    }
+    const older = svgEl('text', { class: 'tick', x: m.l, y: H - 6, 'text-anchor': 'start' });
+    older.textContent = 'older';
+    const newer = svgEl('text', { class: 'tick', x: m.l + pw, y: H - 6, 'text-anchor': 'end' });
+    newer.textContent = 'latest';
+    svg.append(older, newer);
+    if (rec != null) svg.append(svgEl('line', { class: 'record-line', x1: m.l, x2: m.l + pw, y1: Y(rec), y2: Y(rec) }));
+
+    const cross = svgEl('line', { class: 'crosshair', y1: m.t, y2: m.t + ph, visibility: 'hidden' });
+    svg.append(cross);
+    svg.append(svgEl('path', { class: 'series', d: vals.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join('') }));
+    const dots = vals.map((v, i) => svgEl('circle', { class: 'pt', cx: X(i), cy: Y(v), r: i === n - 1 ? 5.5 : 4 }));
+    svg.append(...dots);
+    const endLabel = svgEl('text', { class: 'end-label', x: X(n - 1) + 12, y: Y(last) + 4.5 });
+    endLabel.textContent = fmtPrecise(last);
+    svg.append(endLabel);
+    box.append(svg);
+
+    const tip = h('div', { class: 'tooltip', hidden: true, 'aria-hidden': 'true' });
+    box.append(tip);
+    let current = -1;
+    function show(i) {
+      current = i;
+      const x = hist[i];
+      cross.setAttribute('x1', X(i));
+      cross.setAttribute('x2', X(i));
+      cross.setAttribute('visibility', 'visible');
+      dots.forEach((d, k) => d.setAttribute('r', k === i ? 6.5 : k === n - 1 ? 5.5 : 4));
+      tip.replaceChildren(
+        h('strong', { text: fmtPrecise(x.ms) + (x.ms === rec ? ' · best' : '') }),
+        h('span', { text: `Game ${i + 1} · ${MODES[x.mode]?.name ?? ''} · ${flipsText(x.flips)}` }),
+        h('br'),
+        h('span', { text: dateFmt.format(x.date) }),
+      );
+      tip.hidden = false;
+      const scale = svg.getBoundingClientRect().width / W;
+      const tw = tip.offsetWidth;
+      const th = tip.offsetHeight;
+      const left = Math.min(Math.max(X(i) * scale - tw / 2, 0), box.clientWidth - tw);
+      const top = Math.max(Y(x.ms) * scale - th - 14, -th / 2);
+      tip.style.transform = `translate(${left}px, ${top}px)`;
+    }
+    function hide() {
+      current = -1;
+      tip.hidden = true;
+      cross.setAttribute('visibility', 'hidden');
+      dots.forEach((d, k) => d.setAttribute('r', k === n - 1 ? 5.5 : 4));
+    }
+    svg.addEventListener('pointermove', (e) => {
+      const rect = svg.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * (W / rect.width);
+      const i = n === 1 ? 0 : Math.round(((x - m.l) / pw) * (n - 1));
+      show(Math.min(n - 1, Math.max(0, i)));
+    });
+    svg.addEventListener('pointerleave', () => { if (document.activeElement !== svg) hide(); });
+    svg.addEventListener('focus', () => show(n - 1));
+    svg.addEventListener('blur', hide);
+    svg.addEventListener('keydown', (e) => {
+      const moves = { ArrowLeft: current - 1, ArrowRight: current + 1, Home: 0, End: n - 1 };
+      if (!(e.key in moves)) return;
+      e.preventDefault();
+      show(Math.min(n - 1, Math.max(0, moves[e.key])));
+    });
+  }
+  let chartWidth = 0;
+  new ResizeObserver(([entry]) => {
+    const w = Math.round(entry.contentRect.width);
+    if (w && w !== chartWidth && !screens.result.hidden && chartLevel) {
+      chartWidth = w;
+      renderChart(store.data.history[chartLevel] || [], store.data.records[chartLevel] ?? null);
+    }
+  }).observe($('chart'));
+
+  // ---------- Startup ----------
+  applyAppearance();
+  renderSoundBtn();
+  buildStart();
+
+  // Test hook: ?debug=1
+  if (new URLSearchParams(location.search).has('debug')) {
+    window.__memoria = {
+      get game() { return game; },
+      keys: () => game?.cards.map((c) => c.key),
+      flip: (i) => activate(i),
+      warp: (ms) => { if (game) game.acc += ms; tick(); },
+    };
+  }
+})();
+</script>
+</body>
+</html>
